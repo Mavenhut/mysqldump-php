@@ -114,6 +114,7 @@ class Mysqldump
     ) {
         $dumpSettingsDefault = array(
             'include-tables' => array(),
+            'exclude-columns' => array(),
             'exclude-tables' => array(),
             'compress' => Mysqldump::NONE,
             'no-data' => false,
@@ -619,6 +620,12 @@ class Mysqldump
         $columns->setFetchMode(PDO::FETCH_ASSOC);
 
         foreach($columns as $key => $col) {
+            if (!empty($this->dumpSettings['exclude-columns'])) {
+                if (array_search($col['Field'], $this->dumpSettings['exclude-columns'])) {
+                    continue;
+                }
+            }
+
             $types = $this->typeAdapter->parseColumnType($col);
             $columnTypes[$col['Field']] = array(
                 'is_numeric'=> $types['is_numeric'],
