@@ -621,7 +621,7 @@ class Mysqldump
 
         foreach($columns as $key => $col) {
             if (!empty($this->dumpSettings['exclude-columns'])) {
-                if (array_search($col['Field'], $this->dumpSettings['exclude-columns'])) {
+                if (array_search($col['Field'], $this->dumpSettings['exclude-columns']) !== false) {
                     continue;
                 }
             }
