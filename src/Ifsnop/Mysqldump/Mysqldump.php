@@ -137,6 +137,7 @@ class Mysqldump
             'default-character-set' => Mysqldump::UTF8,
             'skip-comments' => false,
             'skip-dump-date' => false,
+            'skip-auto-increment' => false,
             'init_commands' => array(),
             'net_buffer_length' => self::MAXLINESIZE,
             /* deprecated */
@@ -598,6 +599,10 @@ class Mysqldump
             }
             $stmt = $this->typeAdapter->show_create_table($tableName);
             foreach ($this->dbHandler->query($stmt) as $r) {
+                if ($this->dumpSettings['skip-auto-increment']) {
+                    $r = preg_replace('/AUTO_INCREMENT=\d+ /', '', $r);
+                }
+
                 $this->compressManager->write($ret);
                 if ($this->dumpSettings['add-drop-table']) {
                     $this->compressManager->write(
